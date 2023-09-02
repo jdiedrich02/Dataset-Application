@@ -24,7 +24,7 @@ class Window:
         menuFrame.propagate(False)
 
         # New Window Button
-        button = ui.Button(menuFrame, text='New Window', command = self.renderWindow)
+        button = ui.Button(menuFrame, text='Download Data', command = self.downloadFramePDF)
         button.place(x=0, y=0)
         button.config(width = 20)
 
@@ -57,6 +57,12 @@ class Window:
         button = ui.Button(menuFrame, text='Start Render', command=self.startRender)
         button.place(x=0, y=160)
         button.config(width=20)
+
+        # Clear Data Button
+        button = ui.Button(menuFrame, text='Clear Graph Frame', command=self.clearGraphFrame)
+        button.place(x=0, y=200)
+        button.config(width=20)
+        button['state'] = 'disabled'
 
         # Graph Frame
         graphFrame = tk.LabelFrame(window, text='Data Enhancement', padx=10, pady=10, width=1100, height=500, labelanchor='n')
@@ -108,3 +114,9 @@ class Window:
 
     def setGraph(self, combobox):
         self.graph = combobox.get()
+    
+    def downloadFramePDF(self):
+        print('Downloading PDF of data')
+
+    def clearGraphFrame(self):
+        print('Clearing Graph Frame')
