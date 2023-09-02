@@ -49,8 +49,9 @@ class Window:
             ]
         )
         dropdown.place(x=0, y=120)
+        dropdown.bind('<<ComboboxSelected>>', lambda event, arg=dropdown: self.setGraph(arg))
         dropdown.current(0)
-        self.graph = 'Bar'
+        self.graph = dropdown.get()
 
         # Start Render Button
         button = ui.Button(menuFrame, text='Start Render', command=self.startRender)
@@ -105,5 +106,5 @@ class Window:
     def updateLogMessage(self, message):
         self.label.config(text=message)
 
-    def setGraph(self, graph):
-        self.graph = graph
+    def setGraph(self, combobox):
+        self.graph = combobox.get()
