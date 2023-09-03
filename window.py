@@ -26,6 +26,7 @@ class Window:
         self.width = width
         self.height = height
         self.backgroundColor = 'White'
+        self.fontColor = 'Black'
         # Set Font size
 
     def renderWindow(self):
@@ -138,8 +139,8 @@ class Window:
             settingsFrame,
             state = 'readonly',
             values = [
-                'White',
                 'Black',
+                'White',
                 'Red',
                 'Purple'
             ]
