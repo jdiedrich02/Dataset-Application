@@ -1,11 +1,13 @@
 import tkinter as tk
 import tkinter.ttk as ui
 from tkinter import filedialog
-import matplotlib as plot
+import matplotlib.pyplot as plot
+from  matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import algorithms as alg
+import numpy as numpy
 
 class Window:
-    graph = None
+    app = None
     data = None
     label = None
     filename = None
@@ -22,6 +24,12 @@ class Window:
     fontSize = None
     settingsChangeLabel = None
 
+    # Graph Attributes
+    graphFigure = None
+    axes = None    # Here we can specify which type we want through axes.bar, axes.line, etc.
+    graphCanvas = None
+    size = None  # (x, y) tuple
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -31,18 +39,19 @@ class Window:
 
     def renderWindow(self):
         # Basic Window
-        window = tk.Tk()
-        window.geometry(self.width + 'x' + self.height)
-        window.title('Data Reader')
-        window.resizable(width=0, height=0)
+        self.app = tk.Tk()
+        self.app.geometry(self.width + 'x' + self.height)
+        self.app.title('Data Reader')
+        self.app.resizable(width=0, height=0)
+        self.app.protocol("WM_DELETE_WINDOW", self.exit)
 
         # Menu Button Frame
-        menuFrame = tk.LabelFrame(window, text='Menu Options', padx=10, pady=10, width=170, height=300, labelanchor='n')
+        menuFrame = tk.LabelFrame(self.app, text='Menu Options', padx=10, pady=10, width=170, height=300, labelanchor='n')
         menuFrame.pack(expand="yes", padx=20, pady=20, side='left')
         menuFrame.propagate(False)
 
         # Download PDF Button
-        self.downloadBtn = ui.Button(menuFrame, text='Download Data', command = self.downloadFramePDF)
+        self.downloadBtn = ui.Button(menuFrame, text='Download Data', command = self.downloadFrame)
         self.downloadBtn.place(x=0, y=0)
         self.downloadBtn.config(width = 20)
         self.downloadBtn['state'] = 'disabled'
@@ -70,7 +79,7 @@ class Window:
         self.dropdown.place(x=0, y=120)
         self.dropdown.bind('<<ComboboxSelected>>', lambda event, arg=self.dropdown: self.setGraph(arg))
         self.dropdown.current(0)
-        self.graph = self.dropdown.get()
+        self.graphType = self.dropdown.get()
 
         # Start Render Button
         self.renderBtn = ui.Button(menuFrame, text='Start Render', command=self.startRender)
@@ -84,14 +93,19 @@ class Window:
         self.clearDataBtn['state'] = 'disabled'
 
         # Graph Frame
-        graphFrame = tk.LabelFrame(window, text='Data Enhancement', padx=10, pady=10, width=1100, height=500, labelanchor='n')
+        graphFrame = tk.LabelFrame(self.app, text='Data Enhancement', padx=10, pady=10, width=1100, height=500, labelanchor='n')
         graphFrame.pack(expand="yes", padx=20, pady=20)
         graphFrame.propagate(False)
 
-        # Add Graph in graphFrame
+        # Add Empty Graph in graphFrame
+        self.graphFigure = plot.figure()
+
+        # Graph Canvas
+        self.graphCanvas = FigureCanvasTkAgg(self.graphFigure, graphFrame)
+        self.graphCanvas._tkcanvas.pack(fill=tk.BOTH, expand=1)
 
         # Log Frame
-        logFrame = tk.LabelFrame(window, text='Logs', padx=10, pady=10, width=1500, height=100, labelanchor='n')
+        logFrame = tk.LabelFrame(self.app, text='Logs', padx=10, pady=10, width=1500, height=100, labelanchor='n')
         logFrame.pack(expand="yes", padx=20, pady=20)
         logFrame.propagate(False)
 
@@ -166,6 +180,7 @@ class Window:
         fontSizeDropdown.pack(pady=5)
         fontSizeDropdown.bind('<<ComboboxSelected>>', lambda event, arg=fontSizeDropdown: self.setFontSize(arg))
         fontSizeDropdown.current(0)
+        self.graphType = fontSizeDropdown.get()
 
         # Change settings label
         self.settingsChangeLabel = tk.Label(settingsFrame)
@@ -198,20 +213,24 @@ class Window:
             return
 
         self.disableAll()
-        self.updateLogMessage('Rendering a ' + self.graph + ' graph from file: ' + self.filename)
-        print('rendering data')
+        self.updateLogMessage('Rendering a ' + self.graphType + ' graph from file: ' + self.filename)
+        self.renderGraph()
 
     def updateLogMessage(self, message):
         self.label.config(text=message)
 
     def setGraph(self, combobox):
-        self.graph = combobox.get()
+        self.graphType = combobox.get()
     
-    def downloadFramePDF(self):
-        print('Downloading PDF of data')
+    def downloadFrame(self):
+        self.graphFigure.savefig('graph.png')
+        self.updateLogMessage('Downloaded Graph as PNG')
 
     def clearGraphFrame(self):
-        print('Clearing Graph Frame')
+        self.graphFigure.clear()
+        self.graphCanvas.draw()
+        self.downloadBtn['state'] = 'disabled'
+        self.clearDataBtn['state'] = 'disabled'
 
     def disableAll(self):
         # Disable all the buttons
@@ -245,3 +264,23 @@ class Window:
 
     def closeSettings(self, settings):
         settings.destroy()
+
+    # Add parameters for data, size, etc.
+    def renderGraph(self):
+        self.axes = self.graphFigure.add_subplot()
+
+        # Mock test
+        data = (20, 35, 30, 35, 27)
+        ind = numpy.arange(5)
+        
+        if self.graphType == 'Bar':
+            self.axes.bar(ind, data)
+        elif self.graphType == 'Line':
+            self.axes.plot(data)
+
+        self.graphCanvas.draw()
+        self.enableAll()
+
+    def exit(self):
+        self.app.quit()
+        self.app.destroy()
