@@ -199,14 +199,19 @@ class Window:
             ('CSV Files', '*.csv')
         )
         self.filename = filedialog.askopenfilename(filetypes=filetypes)
-        self.updateLogMessage('Successfully Uploaded File: ' + self.filename)
 
+        if self.filename == '':
+            self.updateLogMessage('ERROR: No File Uploaded')
+            self.filename = None
+            return
+        
+        self.updateLogMessage('SUCCESS: Uploaded File: ' + self.filename)
         # Parse the data with an algorithm (depending on the file type)
-        if (self.filename.find('.txt')):
+        if '.txt' in self.filename:
             self.data = alg.parseTxt(self.filename)
-        elif (self.filename.find('.csv')):
+        elif '.csv' in self.filename:
             self.data = alg.parseCSV(self.filename)
-        elif (self.filename.find('.xlsx')):
+        elif '.xlsx' in self.filename:
             self.data = alg.parseExcel(self.filename)
 
     def startRender(self):
@@ -219,7 +224,14 @@ class Window:
         self.renderGraph()
 
     def updateLogMessage(self, message):
-        self.label.config(text=message)
+        if "ERROR" in message:
+            self.label.config(text=message, foreground='red')
+            return
+        elif "SUCCESS" in message:
+            self.label.config(text=message, foreground='green')
+            return
+        
+        self.label.config(text=message, foreground='black')
 
     def setGraph(self, combobox):
         self.graphType = combobox.get()
