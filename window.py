@@ -35,7 +35,7 @@ class Window:
         self.height = height
         self.backgroundColor = 'White'
         self.fontColor = 'Black'
-        # Set Font size
+        self.fontSize = '12px'
 
     def renderWindow(self):
         # Basic Window
@@ -130,57 +130,59 @@ class Window:
 
         # Background Color
         bgColorLabel = tk.Label(settingsFrame, text='Background Color')
+        colors = [
+            'White',
+            'Black',
+            'Blue',
+            'Purple'
+        ]
         bgColorLabel.pack()
         bgColor = ui.Combobox(
             settingsFrame,
             state = 'readonly',
-            values = [
-                'White',
-                'Black',
-                'Blue',
-                'Purple'
-            ]
+            values = colors
         )
         bgColor.place(x=20, y=20)
         bgColor.pack(pady=5)
         bgColor.bind('<<ComboboxSelected>>', lambda event, arg=bgColor: self.setBackgroundColor(arg))
-        bgColor.current(0)
+        bgColor.current(colors.index(self.backgroundColor))
 
         # Font Color
         fontColorLabel = tk.Label(settingsFrame, text='Font Color')
+        fontColors = [
+            'Black',
+            'White',
+            'Red',
+            'Purple'
+        ]
         fontColorLabel.pack()
         fontColorDropdown = ui.Combobox(
             settingsFrame,
             state = 'readonly',
-            values = [
-                'Black',
-                'White',
-                'Red',
-                'Purple'
-            ]
+            values = fontColors
         )
         fontColorDropdown.pack(pady=5)
         fontColorDropdown.bind('<<ComboboxSelected>>', lambda event, arg=fontColorDropdown: self.setFontColor(arg))
-        fontColorDropdown.current(0)
+        fontColorDropdown.current(fontColors.index(self.fontColor))
 
         # Font size
         fontSizeLabel = tk.Label(settingsFrame, text='Font Size')
+        sizes = [
+            '12px',
+            '14px',
+            '16px',
+            '18px',
+            '24px'
+        ]
         fontSizeLabel.pack()
         fontSizeDropdown = ui.Combobox(
             settingsFrame,
             state = 'readonly',
-            values = [
-                '12px',
-                '14px',
-                '16px',
-                '18px',
-                '24px'
-            ]
+            values = sizes
         )
         fontSizeDropdown.pack(pady=5)
         fontSizeDropdown.bind('<<ComboboxSelected>>', lambda event, arg=fontSizeDropdown: self.setFontSize(arg))
-        fontSizeDropdown.current(0)
-        self.graphType = fontSizeDropdown.get()
+        fontSizeDropdown.current(sizes.index(self.fontSize))
 
         # Change settings label
         self.settingsChangeLabel = tk.Label(settingsFrame)
