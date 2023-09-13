@@ -35,7 +35,7 @@ class Window:
         self.height = height
         self.backgroundColor = 'White'
         self.fontColor = 'Black'
-        self.fontSize = '12px'
+        self.fontSize = '12'
 
     def renderWindow(self):
         # Basic Window
@@ -105,13 +105,14 @@ class Window:
         self.graphCanvas._tkcanvas.pack(fill=tk.BOTH, expand=1)
 
         # Log Frame
-        logFrame = tk.LabelFrame(self.app, text='Logs', padx=10, pady=10, width=1500, height=100, labelanchor='n')
+        logFrame = tk.LabelFrame(self.app, text='Logs', padx=10, pady=10, width=1500, height=200, labelanchor='n')
         logFrame.pack(expand="yes", padx=20, pady=20)
         logFrame.propagate(False)
 
         # Log Label
         self.label = tk.Label(logFrame, text='Welcome!')
         self.label.pack(expand="yes", padx=20, pady=20)
+        self.label.config(font=("Arial", self.fontSize))
 
         # Mainloop call at the end of the rendering
         tk.mainloop()
@@ -166,13 +167,12 @@ class Window:
         fontColorDropdown.current(fontColors.index(self.fontColor))
 
         # Font size
-        fontSizeLabel = tk.Label(settingsFrame, text='Font Size')
+        fontSizeLabel = tk.Label(settingsFrame, text='Log Font Size')
         sizes = [
-            '12px',
-            '14px',
-            '16px',
-            '18px',
-            '24px'
+            '12',
+            '14',
+            '16',
+            '18'
         ]
         fontSizeLabel.pack()
         fontSizeDropdown = ui.Combobox(
@@ -245,6 +245,7 @@ class Window:
         self.graphCanvas.draw()
         self.downloadBtn['state'] = 'disabled'
         self.clearDataBtn['state'] = 'disabled'
+        self.updateLogMessage('Graph Frame Cleared')
 
     def disableAll(self):
         # Disable all the buttons
@@ -266,14 +267,17 @@ class Window:
 
     def setBackgroundColor(self, combobox):
         self.backgroundColor = combobox.get()
+        # Update the background color here - Closes the implement settings function issue
         self.settingsChangeLabel.config(text='Background Color Updated Successfully')
 
     def setFontColor(self, combobox):
         self.fontColor = combobox.get()
+        # Update the font color here - Closes the implement settings function issue
         self.settingsChangeLabel.config(text='Font Color Updated Successfully')
 
     def setFontSize(self, combobox):
         self.fontSize = combobox.get()
+        self.label.config(font=("Arial", self.fontSize))
         self.settingsChangeLabel.config(text='Font Size Updated Successfully')
 
     def closeSettings(self, settings):
