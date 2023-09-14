@@ -73,7 +73,8 @@ class Window:
             values = [
                 'Bar',
                 'Pie',
-                'Line'
+                'Line',
+                'Scatterplot'
             ]
         )
         self.dropdown.place(x=0, y=120)
@@ -282,15 +283,21 @@ class Window:
     # Add parameters for data, size, etc.
     def renderGraph(self):
         self.axes = self.graphFigure.add_subplot()
+        
+        # The first element of 'x' and 'y' are the labels
+        self.axes.set_xlabel(self.data['x'][0])
+        self.axes.set_ylabel(self.data['y'][0])
 
         # Mock test
         data = (20, 35, 30, 35, 27)
         ind = numpy.arange(5)
-        
+
         if self.graphType == 'Bar':
             self.axes.bar(ind, data)
         elif self.graphType == 'Line':
             self.axes.plot(data)
+        elif self.graphType == 'Scatterplot':
+            self.axes.plot(self.data['x'][1:], self.data['y'][1:], "o")
 
         self.graphCanvas.draw()
         self.enableAll()
